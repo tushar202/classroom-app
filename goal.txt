@@ -1,0 +1,32 @@
+two types of users
+1. X (admin)
+2. Y
+
+1 X who has a monopoly
+several Y's who will have similar access
+
+x can  delete any y as they wish
+
+functionality
+
+1. task
+ - can only be created by X
+ - y can see that
+ - y can mark that as completed or uncompleted
+ - everyone can see who has completed it
+ - x can delete this too
+
+ 2. files upload
+
+ two  types of files upload
+
+ 1. 1st type
+-x can upload y can see
+
+2. 2nd type
+-y will upload and can only view what they have uploaded x can view what others have uploaded
+
+3. msgs 
+
+-  x can send it and y's can view it
+
