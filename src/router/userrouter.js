@@ -3,6 +3,7 @@ const router=express.Router()
 const User=require('../models/user')
 const auth=require('../middleware/auth')
 const  isAdmin=require('../middleware/access')
+const useroradmin=require('../middleware/useroradmin')
 const todo=require('../models/todo')
 const uniqid=require('uniqid')
 
@@ -55,11 +56,22 @@ router.post('/createclass',auth,async(req,res)=>{
 router.post('/joinclass',auth,async(req,res)=>{
 
     const uid=req.body.uid
+   
     const clas=await User.findOne({'classCreated.uid':uid})
     console.log(clas);
     if(!clas){
-        res.status(400).send()
+       return res.status(400).send('no such class exists')
     }
+    const id=req.user.classCreated.filter((classid)=>{
+        return classid.uid===uid
+    })
+    console.log(id);
+    
+    if(id.length!==0){
+       return  res.status(400).send('u cannot join ur own class')
+    }
+    
+   
     req.user.classJoined=req.user.classJoined.concat({uid})
      await req.user.save()
     res.send(req.user)
@@ -77,10 +89,10 @@ router.get('/show',async(req,res)=>{
     res.send(req.user)
 })
 router.post('/login',async(req,res)=>{
-    try{
+    //try{
         const user=await User.findOne({email:req.body.email})
         const inputPassword=req.body.password
-         if(!admin)
+         if(!user)
         throw new Error('no user found')
         console.log('i');
         
@@ -91,9 +103,9 @@ router.post('/login',async(req,res)=>{
         
         const token=await vuser.generateTokens()
         res.send({vuser,token})
-    }catch(e){
-        res.status(400).send(e)
-    }
+    //}catch(e){
+      //  res.status(400).send(e)
+    //}
 })
 
 router.post('/enterclass/:id',auth,isAdmin,async(req,res)=>{
@@ -101,18 +113,22 @@ router.post('/enterclass/:id',auth,isAdmin,async(req,res)=>{
     res.send('allok')
 })
 
-router.post('/createtodo/:id',auth,isAdmin,async(req,res)=>{
-    console.log(req.user._id);
-    
-    const task=new todo({
-        ...req.body,
-        classid:req.params.id,
-        createdBy:req.user._id
+router.post('/leaveclass/:id',auth,useroradmin,async(req,res)=>{
+    const  user=req.user
+    user.classJoined=user.classJoined.filter((clas)=>{
+        return clas.uid!==req.params.id
     })
-    console.log(task);
-    
-    await task.save()
-    res.send(task)
+    await user.save()
+    res.send(user)
+})
+
+router.post('/removestudent/:id/:_id',auth,isAdmin,async(req,res)=>{
+    const ruser=await User.findById(req.params._id)
+    ruser.classJoined=ruser.classJoined.filter((clas)=>{
+        return clas.uid!==req.params.id
+    })
+    await ruser.save()
+    res.send('user successfully removes from the class')
 })
 
 module.exports=router
