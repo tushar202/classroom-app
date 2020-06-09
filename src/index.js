@@ -1,12 +1,10 @@
 const express=require('express')
-const adminrouter=require('./router/adminrouter')
-const userrouter=require('./router/usersrouter')
+const userrouter=require('./router/userrouter')
 require('./db/mongoose')
 const app=express()
 
 
 app.use(express.json())
-app.use(adminrouter)
 app.use(userrouter)
 
 app.listen('3000',()=>{

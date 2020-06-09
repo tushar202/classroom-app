@@ -3,7 +3,7 @@ const validator=require('validator')
 const  bcrypt=require('bcrypt')
 const jwt=require('jsonwebtoken')
 
-const adminSchema=mongoose.Schema({
+const userSchema=mongoose.Schema({
     name:{
         type:String,
         required:true
@@ -23,6 +23,16 @@ const adminSchema=mongoose.Schema({
         type:String,
         required:true
     },
+    classCreated:[{
+        uid:{
+            type:String
+        }
+    }],
+    classJoined:[{
+        uid:{
+            type:String
+        }
+    }],
     tokens:[{
         token:{
             type:String,
@@ -31,7 +41,7 @@ const adminSchema=mongoose.Schema({
     }]
 })
 
-adminSchema.pre('save',async function(next){
+userSchema.pre('save',async function(next){
     const user=this
     if(user.isModified('password')){
         user.password=await bcrypt.hash(user.password,8)
@@ -39,7 +49,7 @@ adminSchema.pre('save',async function(next){
     next()
 })
 
-adminSchema.methods.checkPassword=async function(inputPassword){
+userSchema.methods.checkPassword=async function(inputPassword){
     const user=this
     console.log(inputPassword);
     
@@ -51,7 +61,7 @@ adminSchema.methods.checkPassword=async function(inputPassword){
     throw new Error('password doesnt match')
 }
 
-adminSchema.methods.generateTokens=async function(){
+userSchema.methods.generateTokens=async function(){
     const user=this
     const  token=await jwt.sign({_id:user._id.toString()},'secret')
     user.tokens=user.tokens.concat({token:token})
@@ -61,6 +71,6 @@ adminSchema.methods.generateTokens=async function(){
 }
 
 
-const Admin=mongoose.model('Admin',adminSchema)
+const User=mongoose.model('User',userSchema)
 
-module.exports=Admin
+module.exports=User

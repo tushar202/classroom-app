@@ -1,17 +1,19 @@
 const jwt=require('jsonwebtoken')
-const Admin=require('../models/admin')
+const User=require('../models/user')
 
 const auth=async(req,res,next)=>{
 
     try{
     const token=req.header('Authorization').replace('Bearer ','')
-    console.log(token);
+    //console.log(token);
     
     const decoded=await jwt.verify(token,'secret')
-    const admin=await Admin.findOne({_id:decoded._id,'tokens.token':token})
-    if(!admin)
+    //console.log(decoded);
+    
+    const user=await User.findOne({_id:decoded._id,'tokens.token':token})
+    if(!user)
     res.status(400).send('user not verified')
-    req.admin=admin
+    req.user=user
     req.token=token
     }catch(e){
         res.status(500).send()
