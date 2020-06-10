@@ -7,39 +7,15 @@ const useroradmin=require('../middleware/useroradmin')
 const todo=require('../models/todo')
 const uniqid=require('uniqid')
 
-router.post('/user/signup',async(req,res)=>{
-    const admin=new User(req.body)
-    //console.log(admin);
-    
-    try{
-        await admin.save()
-        const token=await admin.generateTokens()
-        res.status(201).send({admin,token})
-    }catch(e){
-        res.status(500).send(e)
-    }
-    req.admin=admin
-})
 
-// router.get('/displayuser/:id',auth,async(req,res)=>{
-//     const admin=await Admin.findById(req.params.id)
-//     const adminEmail=admin.email
-//     //console.log(adminEmail);
+
+
+
+router.get('/displayuser/:id',auth,isAdmin,async(req,res)=>{
+    const users=await User.find({'classJoined.uid':req.params.id})
+    res.send(users)
     
-//     try{
-//         //console.log(adminEmail);
-        
-//     const users=await User.find({adminEmail:adminEmail})
-//     console.log(users);
-    
-//     if(users.length===0){
-//        return  res.status(400).send('no  user found')
-//     }
-//     res.send(users)
-// }catch(e){
-//     res.status(500).send(e)
-// }
-// })
+})
 
 router.post('/createclass',auth,async(req,res)=>{
     const user=req.user

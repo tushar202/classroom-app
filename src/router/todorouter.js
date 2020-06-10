@@ -35,4 +35,20 @@ router.post('/markcompleted/:id/:_id',auth,useroradmin,async(req,res)=>{
     res.send(task)
 })
 
+
+router.get('/taskcompletelist/:id/_id',auth,useroradmin,async(req,res)=>{
+    try{
+    const task=await todo.findById(req.params._id)
+    const users=task.completedby
+    res.send(users)
+    }catch(e){
+        res.status(500).send()
+    }
+})
+
+router.delete('/deletetask/:id/:_id',auth,isAdmin,async(req,res)=>{
+        const task=await todo.findByIdAndDelete(req.params._id)
+        res.send(task)
+        
+})
 module.exports=router

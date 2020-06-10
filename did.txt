@@ -1,0 +1,7 @@
+-user can create his account 
+-user can create and join a class(by entering the code)
+-each class has an admin
+-admin can remove a user from the group
+-user can leave the group
+-admin can create tasks
+-users in the class can view the tasks and mark it completed
